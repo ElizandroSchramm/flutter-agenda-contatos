@@ -55,7 +55,27 @@ class _ContactPageState extends State<ContactPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: (){
             if(_editedContact.name != null && _editedContact.name.isNotEmpty){
-              Navigator.pop(context, _editedContact);
+              if(!isValidEmail(_editedContact.email)) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: new Text("E-mail inválido"),
+                      content: new Text("Informe um e-mail válido"),
+                      actions: <Widget>[
+                        new FlatButton(
+                          child: new Text("Ok"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                Navigator.pop(context, _editedContact);
+              }
             } else {
               FocusScope.of(context).requestFocus(_nameFocus);
             }
@@ -155,6 +175,12 @@ class _ContactPageState extends State<ContactPage> {
     } else {
       return Future.value(true);
     }
+  }
+
+  bool isValidEmail(String email) {
+    var p = r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+    var regExp = RegExp(p);
+    return regExp.hasMatch(email.trim());
   }
 
 }
